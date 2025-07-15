@@ -4,7 +4,7 @@
 
 /* 1. Se define la nueva paleta de colores profesional */
 :root {
-  --background: #1a1a1a;      /* Negro/Gris muy oscuro para el fondo */
+  --background: #c1c1c1;      /* Negro/Gris muy oscuro para el fondo */
   --surface: #2c2c2c;         /* Gris para superficies (inputs, botones secundarios) */
   --border: #444444;           /* Un borde sutil para separar elementos */
   
