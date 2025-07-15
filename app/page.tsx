@@ -164,7 +164,7 @@ export default function Home() {
             disabled={isProcessing || numeroCotizacion === null}
             className="pdf-button"
           >
-            {isProcessing ? 'Generando...' : (numeroCotizacion === null ? 'Cargando...' : `📄 Descargar y Registrar PDF No. ${numeroCotizacion}`)}
+            {isProcessing ? 'Generando...' : (numeroCotizacion === null ? 'Cargando...' : `📄 Descargar Cotización ${numeroCotizacion}`)}
           </button>
         </div>
       )}
