@@ -4,7 +4,7 @@
 
 /* 1. Se define la nueva paleta de colores profesional */
 :root {
-  --background: #c1c1c1;      /* Negro/Gris muy oscuro para el fondo */
+  --background: #000000;      /* Negro/Gris muy oscuro para el fondo */
   --surface: #2c2c2c;         /* Gris para superficies (inputs, botones secundarios) */
   --border: #444444;           /* Un borde sutil para separar elementos */
   
@@ -16,8 +16,18 @@
 }
 
 /* 2. Se aplican los colores base */
+/* Reemplaza tu 'body' actual con esto en globals.css */
+
 body {
-  background-color: var(--background);
+  /* Un color de fondo base por si el gradiente no carga */
+  background-color: #2d3748; 
+  
+  /* Gradiente sutil de un gris azulado a uno más oscuro */
+  background-image: linear-gradient(180deg, #3c4a5e 0%, #212936 100%);
+
+  /* Aseguramos que el fondo cubra toda la pantalla, incluso si hay poco contenido */
+  min-height: 100vh;
+  
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
