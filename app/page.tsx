@@ -49,7 +49,11 @@ export default function Home() {
   
   const agregarProducto = (producto: Producto) => setProductos(prev => [...prev, { ...producto, cantidad: 1 }]);
   const actualizarCantidad = (index: number, cantidad: number) => {
-    setProductos(prev => prev.map((p, i) => i === index ? { ...p, cantidad: isNaN(cantidad) ? 1 : cantidad } : p));
+    // Si la cantidad no es un número (ej. campo vacío), la guardamos como 'undefined'
+    const nuevaCantidad = isNaN(cantidad) ? undefined : cantidad;
+    setProductos(prev => prev.map((p, i) => 
+      i === index ? { ...p, cantidad: nuevaCantidad } : p
+    ));
   };
   const eliminarProducto = (index: number) => {
     setProductos(prev => prev.filter((_, i) => i !== index));
