@@ -1,11 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 
-type Producto = {
-  codigo: string;
-  nombre: string;
-  precio: number;
-};
+// 👇 1. Se importa el tipo desde el archivo central
+import { Producto } from '../types.d';
+
+// 2. La definición local 'type Producto = { ... }' se elimina de aquí.
 
 type Props = {
   listaPrecio: string;
@@ -20,7 +19,6 @@ export default function SelectProducto({
   const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
-    // ... (esta parte no cambia)
     const obtenerDatos = async () => {
       try {
         const res = await fetch(
@@ -58,10 +56,11 @@ export default function SelectProducto({
         console.error("Error al obtener productos:", error);
       }
     };
-    obtenerDatos();
+    if (listaPrecio) { // Solo busca productos si hay una lista de precio seleccionada
+        obtenerDatos();
+    }
   }, [listaPrecio]);
 
-  // 👇 CAMBIO 1: La lista filtrada ahora depende de si 'busqueda' tiene texto.
   const productosFiltrados = busqueda
     ? productos.filter(
         (p) =>
@@ -70,10 +69,9 @@ export default function SelectProducto({
       )
     : [];
 
-  // 👇 CAMBIO 2: Nueva función para manejar el clic.
   const handleSelectProducto = (producto: Producto) => {
-    onProductoSeleccionado(producto); // Envía el producto al componente padre
-    setBusqueda(""); // Limpia la búsqueda y cierra la lista
+    onProductoSeleccionado(producto);
+    setBusqueda(""); 
   };
 
   return (
@@ -87,13 +85,12 @@ export default function SelectProducto({
         style={{ width: "100%", padding: "8px", marginBottom: "1rem" }}
       />
 
-      {/* La lista solo aparece si hay productos filtrados */}
       {productosFiltrados.length > 0 && (
         <ul style={{ listStyle: "none", padding: 0 }}>
           {productosFiltrados.map((p) => (
             <li key={p.codigo} style={{ marginBottom: "0.5rem" }}>
               <button
-                onClick={() => handleSelectProducto(p)} // Usamos la nueva función
+                onClick={() => handleSelectProducto(p)}
                 className="product-item-button"
               >
                 {p.codigo} - {p.nombre} (${p.precio.toLocaleString()})

@@ -2,11 +2,10 @@
 import { useEffect, useState } from "react";
 import { useCombobox } from "downshift";
 
-// Para mejorar la robustez, este tipo debería venir de un archivo central como app/types.ts
-type Cliente = {
-  ID: string;
-  Cliente: string;
-};
+// 👇 1. Se importa el tipo Cliente desde el archivo central
+import { Cliente } from '../types.d'; 
+
+// 2. La definición de tipo local 'type Cliente = { ... }' se elimina de aquí.
 
 export default function SelectCliente({
   onClienteSeleccionado,
@@ -14,6 +13,9 @@ export default function SelectCliente({
   onClienteSeleccionado: (cliente: Cliente | null) => void;
 }) {
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  // El resto del código no necesita cambios, ya que usa la API correcta y
+  // el componente downshift para la búsqueda.
+  
   const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export default function SelectCliente({
         );
         const data = await res.json();
         const clientesValidos = Array.isArray(data)
-          ? data.filter((c) => typeof c?.Cliente === "string")
+          ? data.filter((c: Cliente) => typeof c?.Cliente === "string")
           : [];
         setClientes(clientesValidos);
         setFilteredClientes(clientesValidos);
@@ -53,9 +55,7 @@ export default function SelectCliente({
       setFilteredClientes(filtered);
     },
     onSelectedItemChange({ selectedItem }) {
-      if (selectedItem) {
-        onClienteSeleccionado(selectedItem);
-      }
+      onClienteSeleccionado(selectedItem || null);
     },
   });
 
@@ -64,37 +64,19 @@ export default function SelectCliente({
       <label>Seleccionar Cliente:</label>
       <input
         {...getInputProps()}
-        className="combobox-input" // <-- AÑADE ESTA CLASE
+        className="combobox-input"
         placeholder="Buscar cliente..."
-        style={{
-          padding: "0.5rem",
-          width: "100%",
-          border: "1px solid #ccc",
-          marginBottom: "0.5rem",
-        }}
       />
-      <ul
-        {...getMenuProps()}
-        style={{
-          border: "1px solid #ccc",
-          maxHeight: 200,
-          overflowY: "auto",
-          padding: 0,
-          margin: 0,
-          listStyle: "none",
-        }}
-      >
+      <ul {...getMenuProps()} className="combobox-menu">
         {isOpen &&
           filteredClientes.map((item, index) => (
             <li
               key={item.ID || index}
               {...getItemProps({ item, index })}
+              className="combobox-item"
               style={{
                 backgroundColor:
-                  highlightedIndex === index ? "#bde4ff" : "#2c2c2c",
-                color: highlightedIndex === index ? "#111" : "#f1f1f1",
-                padding: "0.5rem",
-                cursor: "pointer",
+                  highlightedIndex === index ? "#bde4ff" : undefined,
               }}
             >
               {item.Cliente}

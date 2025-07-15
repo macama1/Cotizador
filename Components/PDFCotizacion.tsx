@@ -1,32 +1,9 @@
 import React, { forwardRef } from "react";
+import { Cliente, Vendedor, Producto } from '../types.d';
 
-// --- TIPOS DE DATOS ---
-type Cliente = {
-  ID: string;
-  Cliente: string;
-  Vendedor: string;
-  Direccion?: string;
-  Correo?: string;
-  Telefono?: string;
-};
-
-type Vendedor = {
-  Vendedor: string;
-  Correo: string;
-  Número: string;
-} | null;
-
-type Producto = {
-  codigo: string;
-  nombre: string;
-  precio: number;
-  cantidad: number;
-};
-
-// Props actualizadas para recibir el número de cotización
 type Props = {
   cliente: Cliente;
-  vendedor: Vendedor;
+  vendedor: Vendedor | null; // <-- CORREGIDO
   productos: Producto[];
   numero: number;
 };
@@ -63,7 +40,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       <header style={styles.header}>
         <img src="/logo.png" alt="Logo" style={styles.logo} />
         <div style={styles.companyInfo}>
-          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br /> 
+          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br />
           PIETTRA SPA<br />
           Panamericana Norte 18.800 Lote 4 Lampa - Santiago<br />
           Tel. {vendedor?.Número || ''}<br />
@@ -71,19 +48,16 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
           www.natstone.cl
         </div>
       </header>
-      
       <section style={styles.infoGrid}>
         <div style={styles.infoBox}><div style={styles.infoLabel}>Cotización No.</div><div style={styles.infoValue}>{numero}</div></div>
         <div style={styles.infoBox}><div style={styles.infoLabel}>Fecha</div><div style={styles.infoValue}>{new Date().toLocaleDateString('es-CL')}</div></div>
         <div style={styles.infoBox}><div style={styles.infoLabel}>Hora</div><div style={styles.infoValue}>{new Date().toLocaleTimeString('es-CL')}</div></div>
       </section>
-      
       <section style={styles.infoGrid}>
           <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE PAGO</div><div style={styles.infoValue}>&nbsp;</div></div>
           <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE ENTREGA</div><div style={styles.infoValue}>&nbsp;</div></div>
           <div style={styles.infoBox}><div style={styles.infoLabel}>TIEMPO DE ENTREGA</div><div style={styles.infoValue}>&nbsp;</div></div>
       </section>
-
       <section style={styles.clientGrid}>
         <div style={styles.clientRow}><div style={styles.clientLabel}>CLIENTE</div><div style={styles.clientValue}>{cliente.Cliente}</div></div>
         <div style={styles.clientRow}><div style={styles.clientLabel}>RUT</div><div style={styles.clientValue}>{cliente.ID}</div></div>
@@ -91,7 +65,6 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
         <div style={styles.clientRow}><div style={styles.clientLabel}>CORREO</div><div style={styles.clientValue}>{cliente.Correo || ''}</div></div>
         <div style={{...styles.clientRow, borderBottom: 'none'}}><div style={styles.clientLabel}>TELÉFONO</div><div style={styles.clientValue}>{cliente.Telefono || ''}</div></div>
       </section>
-
       <table style={styles.table}>
         <thead>
           <tr>
@@ -107,9 +80,9 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
             <tr key={p.codigo}>
               <td style={{...styles.td, textAlign: 'center'}}>{p.codigo}</td>
               <td style={{...styles.td, textAlign: 'left'}}>{p.nombre}</td>
-              <td style={{...styles.td, textAlign: 'center'}}>{p.cantidad}</td>
+              <td style={{...styles.td, textAlign: 'center'}}>{p.cantidad || 1}</td>
               <td style={styles.td}>${p.precio.toLocaleString('es-CL')}</td>
-              <td style={styles.td}>${(p.precio * (p.cantidad || 0)).toLocaleString('es-CL')}</td>
+              <td style={styles.td}>${(p.precio * (p.cantidad || 1)).toLocaleString('es-CL')}</td>
             </tr>
           ))}
           {Array.from({ length: Math.max(0, 12 - productos.length) }).map((_, i) => (
@@ -119,7 +92,6 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
           ))}
         </tbody>
       </table>
-
       <footer style={styles.footer}>
         <div style={styles.notes}>
           <div style={{...styles.clientLabel, width: 'auto'}}>NOTA:</div>
@@ -134,6 +106,5 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
     </div>
   );
 });
-
 PDFCotizacion.displayName = 'PDFCotizacion';
 export default PDFCotizacion;
