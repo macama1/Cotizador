@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
+import Image from 'next/image'; // Importa el componente Image
 import SelectCliente from "../Components/SelectCliente";
 import SelectProducto from "../Components/SelectProducto";
 import PDFCotizacion from "../Components/PDFCotizacion";
@@ -22,15 +23,8 @@ export default function Home() {
   const pdfRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch(API_URL_VENDEDORES)
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setVendedores(data); })
-      .catch((error: any) => console.error("Error al cargar vendedores:", error)); // <-- CORREGIDO
-
-    fetch(API_URL_CONTADOR)
-      .then(res => res.json())
-      .then(data => { if (data && typeof data.numero === 'number') setNumeroCotizacion(data.numero + 1); })
-      .catch((error: any) => console.error("Error al cargar contador:", error)); // <-- CORREGIDO
+    fetch(API_URL_VENDEDORES).then(res => res.json()).then(data => { if (Array.isArray(data)) setVendedores(data); }).catch((error: any) => console.error("Error al cargar vendedores:", error));
+    fetch(API_URL_CONTADOR).then(res => res.json()).then(data => { if (data && typeof data.numero === 'number') setNumeroCotizacion(data.numero + 1); }).catch((error: any) => console.error("Error al cargar contador:", error));
   }, []);
 
   useEffect(() => {
@@ -48,6 +42,7 @@ export default function Home() {
   };
   
   const agregarProducto = (producto: Producto) => setProductos(prev => [...prev, { ...producto, cantidad: 1 }]);
+  
   const actualizarCantidad = (index: number, cantidad: number) => {
     // Si la cantidad no es un número (ej. campo vacío), la guardamos como 'undefined'
     const nuevaCantidad = isNaN(cantidad) ? undefined : cantidad;
@@ -55,9 +50,11 @@ export default function Home() {
       i === index ? { ...p, cantidad: nuevaCantidad } : p
     ));
   };
+  
   const eliminarProducto = (index: number) => {
     setProductos(prev => prev.filter((_, i) => i !== index));
   };
+  
   const actualizarPrecio = (index: number, precio: number) => {
     setProductos(prev => prev.map((p, i) => i === index ? { ...p, precio: isNaN(precio) ? 0 : precio } : p));
   };
@@ -105,8 +102,19 @@ export default function Home() {
 
   return (
     <main style={{ padding: "2rem" }}>
-      <h1>Cotizador Natstone</h1>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
+        <Image 
+          src="/logo.png" 
+          alt="Logo Natstone" 
+          width={180} 
+          height={60} 
+          priority
+        />
+        <h1 style={{ marginLeft: '1.5rem', fontSize: '2rem' }}>Cotizador Natstone</h1>
+      </div>
+
       <SelectCliente onClienteSeleccionado={(cliente) => setCliente(cliente)} />
+
       {cliente && (
         <div style={{ marginTop: "2rem" }}>
           <h2>Datos del Cliente</h2>
@@ -144,7 +152,15 @@ export default function Home() {
                       <td className="table-cell">{p.codigo}</td>
                       <td className="table-cell">{p.nombre}</td>
                       <td className="table-cell"><input type="number" min={0} value={p.precio} className="price-input" onChange={(e) => actualizarPrecio(i, parseFloat(e.target.value))} /></td>
-                      <td className="table-cell"><input type="number" min={1} value={p.cantidad} className="quantity-input" onChange={(e) => actualizarCantidad(i, parseFloat(e.target.value))} /></td>
+                      <td className="table-cell">
+                        <input 
+                            type="number" 
+                            min={1} 
+                            value={p.cantidad || ''} // Corregido aquí
+                            className="quantity-input" 
+                            onChange={(e) => actualizarCantidad(i, parseFloat(e.target.value))} 
+                        />
+                      </td>
                       <td className="table-cell">${(p.precio * (p.cantidad || 0)).toLocaleString("es-CL")}</td>
                       <td className="table-cell" style={{ textAlign: "center" }}><button onClick={() => eliminarProducto(i)} style={{ color: "red", background: 'none', border: 'none' }}>❌</button></td>
                     </tr>
@@ -164,7 +180,7 @@ export default function Home() {
             disabled={isProcessing || numeroCotizacion === null}
             className="pdf-button"
           >
-            {isProcessing ? 'Generando...' : (numeroCotizacion === null ? 'Cargando...' : `📄 Descargar Cotización ${numeroCotizacion}`)}
+            {isProcessing ? 'Generando...' : (numeroCotizacion === null ? 'Cargando...' : `📄 Descargar y Registrar PDF No. ${numeroCotizacion}`)}
           </button>
         </div>
       )}
