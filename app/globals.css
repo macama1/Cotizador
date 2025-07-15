@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+/* 👇 AÑADE ESTA REGLA para el MODO CLARO */
+.table-header {
+  border: 1px solid #ccc;
+  padding: 8px;
+  background-color: #f0f0f0; /* Fondo gris claro */
+  color: black;              /* Texto negro */
+  font-weight: bold;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+
+  /* --- INICIO: Código para MODO OSCURO --- */
+
+  /* Estilos generales para la mayoría de los inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    background-color: #2c2c2c;
+    color: #f1f1f1;
+    border: 1px solid #555;
+  }
+
+  /* Regla para el input del selector de cliente */
+  .combobox-input {
+    background-color: #2c2c2c;
+    color: #f1f1f1;
+    border: 1px solid #555;
+  }
+
+  /* Estilo para el texto de placeholder en modo oscuro */
+  input::placeholder {
+    color: #888;
+  }
+  
+  /* Estilo para los botones generales */
+  button {
+     background-color: #333;
+     color: #f1f1f1;
+     border: 1px solid #555;
+  }
+
+  /* Efecto visual al pasar el mouse sobre un botón general */
+  button:hover {
+    background-color: #444;
+  }
+
+  /* Reglas para la lista de productos */
+  .product-item-button {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #333;
+    color: #f1f1f1;
+    border: 1px solid #555;
+  }
+
+  .product-item-button:hover {
+    background-color: #444;
+  }
+  
+  /* 👇 AÑADE ESTA REGLA para el MODO OSCURO */
+  .table-header {
+    background-color: #3e3e3e; /* Fondo más oscuro */
+    color: #f1f1f1;             /* Texto claro */
+    border: 1px solid #555;   /* Borde oscuro */
+  }
+
+  /* --- FIN: Código para MODO OSCURO --- */
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+.client-details-form {
+  display: grid;
+  grid-template-columns: 100px 1fr; 
+  gap: 12px;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.client-details-form label {
+  font-weight: bold;
+  text-align: right;
+}
+
+.client-details-form input {
+  width: 100%;
+  max-width: 350px;
+}
+.price-input,
+.quantity-input {
+  /* Estilos compartidos por ambos inputs */
+  padding: 4px 8px;
+  text-align: right; /* Alinea los números a la derecha, que se ve mejor */
+}
+
+.price-input {
+  width: 90px; /* Ancho para el precio */
+}
+
+.quantity-input {
+  width: 70px; /* Ancho para la cantidad */
+}
