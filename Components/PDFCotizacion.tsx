@@ -1,14 +1,19 @@
 import React, { forwardRef } from "react";
 import { Cliente, Vendedor, Producto } from '../types.d';
 
+// 👇 1. AÑADE LAS NUEVAS PROPS AQUÍ
 type Props = {
   cliente: Cliente;
-  vendedor: Vendedor | null; // <-- CORREGIDO
+  vendedor: Vendedor | null;
   productos: Producto[];
   numero: number;
+  formaDePago: string;
+  formaDeEntrega: string;
+  tiempoDeEntrega: string;
 };
 
-const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, productos, numero }, ref) => {
+// 👇 2. RECIBE LAS NUEVAS PROPS AQUÍ
+const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, productos, numero, formaDePago, formaDeEntrega, tiempoDeEntrega }, ref) => {
   const subtotal = productos.reduce((sum, p) => sum + (p.precio || 0) * (p.cantidad || 0), 0);
   const iva = Math.round(subtotal * 0.19);
   const totalAPagar = subtotal + iva;
@@ -21,7 +26,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
     infoGrid: { display: 'flex', justifyContent: 'space-between', marginBottom: '5mm' },
     infoBox: { flex: 1, textAlign: 'center', margin: '0 1mm' },
     infoLabel: { backgroundColor: '#3b5998', color: 'white', padding: '1.5mm', fontSize: '8pt', fontWeight: 'bold' },
-    infoValue: { padding: '1.5mm', border: '1px solid black', borderTop: 'none' },
+    infoValue: { padding: '1.5mm', border: '1px solid black', borderTop: 'none', minHeight: '6mm' },
     clientGrid: { border: '1px solid black', marginBottom: '5mm' },
     clientRow: { display: 'flex', borderBottom: '1px solid black' },
     clientLabel: { backgroundColor: '#2d4373', color: 'white', padding: '1.5mm', fontWeight: 'bold', width: '30mm', fontSize: '8pt' },
@@ -40,24 +45,29 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       <header style={styles.header}>
         <img src="/logo.png" alt="Logo" style={styles.logo} />
         <div style={styles.companyInfo}>
+          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br /> 
           PIETTRA SPA<br />
-          Panamericana Norte 18.800 Lote 4 Lampa - Santiago<br />
-          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br />
+          77057227 - 4<br/>
+          Panamericana Norte 18.800, Lote 4, Lampa - Santiago<br />
           Tel. {vendedor?.Número || ''}<br />
           <a href={`mailto:${vendedor?.Correo || ''}`}>{vendedor?.Correo || ''}</a><br />
           www.natstone.cl
         </div>
       </header>
+      
       <section style={styles.infoGrid}>
-        <div style={styles.infoBox}><div style={styles.infoLabel}>Cotización No.</div><div style={styles.infoValue}>{numero}</div></div>
+        <div style={styles.infoBox}><div style={styles.infoLabel}>Cotización N°.</div><div style={styles.infoValue}>{numero}</div></div>
         <div style={styles.infoBox}><div style={styles.infoLabel}>Fecha</div><div style={styles.infoValue}>{new Date().toLocaleDateString('es-CL')}</div></div>
         <div style={styles.infoBox}><div style={styles.infoLabel}>Hora</div><div style={styles.infoValue}>{new Date().toLocaleTimeString('es-CL')}</div></div>
       </section>
+      
+      {/* 👇 3. MUESTRA LOS NUEVOS VALORES EN EL PDF */}
       <section style={styles.infoGrid}>
-          <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE PAGO</div><div style={styles.infoValue}>&nbsp;</div></div>
-          <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE ENTREGA</div><div style={styles.infoValue}>&nbsp;</div></div>
-          <div style={styles.infoBox}><div style={styles.infoLabel}>TIEMPO DE ENTREGA</div><div style={styles.infoValue}>&nbsp;</div></div>
+          <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE PAGO</div><div style={styles.infoValue}>{formaDePago || '\u00A0'}</div></div>
+          <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE ENTREGA</div><div style={styles.infoValue}>{formaDeEntrega || '\u00A0'}</div></div>
+          <div style={styles.infoBox}><div style={styles.infoLabel}>TIEMPO DE ENTREGA</div><div style={styles.infoValue}>{tiempoDeEntrega || '\u00A0'}</div></div>
       </section>
+
       <section style={styles.clientGrid}>
         <div style={styles.clientRow}><div style={styles.clientLabel}>CLIENTE</div><div style={styles.clientValue}>{cliente.Cliente}</div></div>
         <div style={styles.clientRow}><div style={styles.clientLabel}>RUT</div><div style={styles.clientValue}>{cliente.ID}</div></div>
@@ -65,6 +75,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
         <div style={styles.clientRow}><div style={styles.clientLabel}>CORREO</div><div style={styles.clientValue}>{cliente.Correo || ''}</div></div>
         <div style={{...styles.clientRow, borderBottom: 'none'}}><div style={styles.clientLabel}>TELÉFONO</div><div style={styles.clientValue}>{cliente.Telefono || ''}</div></div>
       </section>
+
       <table style={styles.table}>
         <thead>
           <tr>
@@ -92,6 +103,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
           ))}
         </tbody>
       </table>
+
       <footer style={styles.footer}>
         <div style={styles.notes}>
           <div style={{...styles.clientLabel, width: 'auto'}}>NOTA:</div>
@@ -105,6 +117,10 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       </footer>
     </div>
   );
+});
+
+PDFCotizacion.displayName = 'PDFCotizacion';
+export default PDFCotizacion;
 });
 PDFCotizacion.displayName = 'PDFCotizacion';
 export default PDFCotizacion;
