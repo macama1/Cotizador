@@ -161,3 +161,7 @@ input::placeholder {
   background-color: #3c3c3c;
   border-color: var(--primary);
 }
+.info-select {
+  width: 100%;        /* Ocupa el espacio disponible que le da el grid */
+  max-width: 280px;   /* Pero con un ancho máximo para que no se estire demasiado */
+}
