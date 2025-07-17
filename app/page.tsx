@@ -106,15 +106,15 @@ export default function Home() {
 
       <div className="client-details-form" style={{marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '2rem'}}>
         <label>Forma de Pago:</label>
-        <select value={formaDePago} onChange={(e) => setFormaDePago(e.target.value)}>
+        <select value={formaDePago} onChange={(e) => setFormaDePago(e.target.value)}className="info-select">
           {opcionesPago.map(op => <option key={op} value={op}>{op}</option>)}
         </select>
         <label>Forma de Entrega:</label>
-        <select value={formaDeEntrega} onChange={(e) => setFormaDeEntrega(e.target.value)}>
+        <select value={formaDeEntrega} onChange={(e) => setFormaDeEntrega(e.target.value)}className="info-select">
           {opcionesEntrega.map(op => <option key={op} value={op}>{op}</option>)}
         </select>
         <label>Tiempo de Entrega:</label>
-        <select value={tiempoDeEntrega} onChange={(e) => setTiempoDeEntrega(e.target.value)}>
+        <select value={tiempoDeEntrega} onChange={(e) => setTiempoDeEntrega(e.target.value)}className="info-select">
           {opcionesTiempo.map(op => <option key={op} value={op}>{op}</option>)}
         </select>
       </div>
