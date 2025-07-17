@@ -19,7 +19,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
   const totalAPagar = subtotal + iva;
   
   const styles: { [key: string]: React.CSSProperties } = {
-    page: { padding: '10mm', fontFamily: 'Arial, sans-serif', fontSize: '9pt', color: '#000', width: '210mm', height: '297mm', boxSizing: 'border-box' },
+    page: { padding: '10mm', fontFamily: 'Arial, sans-serif', fontSize: '9pt', color: '#000', width: '210mm', height: '279.4mm', boxSizing: 'border-box' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8mm' },
     logo: { width: '50mm' },
     companyInfo: { textAlign: 'right', fontSize: '9pt' },
@@ -119,8 +119,5 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
   );
 });
 
-PDFCotizacion.displayName = 'PDFCotizacion';
-export default PDFCotizacion;
-});
 PDFCotizacion.displayName = 'PDFCotizacion';
 export default PDFCotizacion;
