@@ -20,4 +20,5 @@ export type Vendedor = {
     nombre: string;
     precio: number;
     cantidad?: number; // La cantidad es opcional
+    precioBase?: number; // El precio original
   };
