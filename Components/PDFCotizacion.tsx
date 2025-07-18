@@ -1,7 +1,6 @@
 import React, { forwardRef } from "react";
 import { Cliente, Vendedor, Producto } from '../types.d';
 
-// 👇 1. AÑADE LAS NUEVAS PROPS AQUÍ
 type Props = {
   cliente: Cliente;
   vendedor: Vendedor | null;
@@ -12,14 +11,13 @@ type Props = {
   tiempoDeEntrega: string;
 };
 
-// 👇 2. RECIBE LAS NUEVAS PROPS AQUÍ
 const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, productos, numero, formaDePago, formaDeEntrega, tiempoDeEntrega }, ref) => {
-  const subtotal = productos.reduce((sum, p) => sum + (p.precio || 0) * (p.cantidad || 0), 0);
+  const subtotal = productos.reduce((sum, p) => sum + (p.precio || 0) * (p.cantidad || 1), 0);
   const iva = Math.round(subtotal * 0.19);
   const totalAPagar = subtotal + iva;
   
   const styles: { [key: string]: React.CSSProperties } = {
-    page: { padding: '10mm', fontFamily: 'Arial, sans-serif', fontSize: '9pt', color: '#000', width: '210mm', height: '279.4mm', boxSizing: 'border-box' },
+    page: { padding: '10mm', fontFamily: 'Arial, sans-serif', fontSize: '8pt', color: '#000', width: '210mm', height: '279.4mm', boxSizing: 'border-box', backgroundColor: 'white' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8mm' },
     logo: { width: '50mm' },
     companyInfo: { textAlign: 'right', fontSize: '9pt' },
@@ -31,7 +29,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
     clientRow: { display: 'flex', borderBottom: '1px solid black' },
     clientLabel: { backgroundColor: '#2d4373', color: 'white', padding: '1.5mm', fontWeight: 'bold', width: '30mm', fontSize: '8pt' },
     clientValue: { padding: '1.5mm', flexGrow: 1, backgroundColor: '#fff' },
-    table: { width: '100%', borderCollapse: 'collapse', fontSize: '9pt', border: '1px solid black' },
+    table: { width: '100%', borderCollapse: 'collapse', fontSize: '8pt', border: '1px solid black' },
     th: { backgroundColor: '#e0e0e0', padding: '1.5mm', border: '1px solid black', fontWeight: 'bold' },
     td: { padding: '1.5mm', border: '1px solid black', textAlign: 'right', backgroundColor: '#fff' },
     footer: { display: 'flex', justifyContent: 'space-between', marginTop: '5mm', alignItems: 'flex-start' },
@@ -44,13 +42,13 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
     <div ref={ref} style={styles.page}>
       <header style={styles.header}>
         <img src="/logo.png" alt="Logo" style={styles.logo} />
-        <div style={styles.companyInfo}> 
+        <div style={styles.companyInfo}>
+          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br /> 
           PIETTRA SPA<br />
-          77057227 - 4<br/>
+          77057227-4<br/>
           Panamericana Norte 18.800, Lote 4, Lampa - Santiago<br />
-          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br />
-          <a href={`mailto:${vendedor?.Correo || ''}`}>{vendedor?.Correo || ''}</a><br />
           Tel. {vendedor?.Número || ''}<br />
+          <a href={`mailto:${vendedor?.Correo || ''}`}>{vendedor?.Correo || ''}</a><br />
           www.natstone.cl
         </div>
       </header>
@@ -61,7 +59,6 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
         <div style={styles.infoBox}><div style={styles.infoLabel}>Hora</div><div style={styles.infoValue}>{new Date().toLocaleTimeString('es-CL')}</div></div>
       </section>
       
-      {/* 👇 3. MUESTRA LOS NUEVOS VALORES EN EL PDF */}
       <section style={styles.infoGrid}>
           <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE PAGO</div><div style={styles.infoValue}>{formaDePago || '\u00A0'}</div></div>
           <div style={styles.infoBox}><div style={styles.infoLabel}>FORMA DE ENTREGA</div><div style={styles.infoValue}>{formaDeEntrega || '\u00A0'}</div></div>
@@ -79,26 +76,39 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={{...styles.th, width: '15%'}}>CODIGO</th>
-            <th style={{...styles.th, width: '45%', textAlign: 'left'}}>DESCRIPCIÓN</th>
-            <th style={{...styles.th, width: '10%'}}>CANTIDAD</th>
-            <th style={{...styles.th, width: '15%'}}>PRECIO</th>
-            <th style={{...styles.th, width: '15%'}}>TOTAL</th>
+            <th style={{...styles.th, width: '12%'}}>CODIGO</th>
+            <th style={{...styles.th, width: '35%', textAlign: 'left'}}>DESCRIPCIÓN</th>
+            <th style={{...styles.th, width: '8%'}}>CANT.</th>
+            <th style={{...styles.th, width: '15%'}}>PRECIO BASE</th>
+            <th style={{...styles.th, width: '15%'}}>PRECIO ESPECIAL</th>
+            <th style={{...styles.th, width: '5%'}}>% DCTO.</th>
+            <th style={{...styles.th, width: '10%'}}>TOTAL</th>
           </tr>
         </thead>
         <tbody>
-          {productos.map(p => (
-            <tr key={p.codigo}>
-              <td style={{...styles.td, textAlign: 'center'}}>{p.codigo}</td>
-              <td style={{...styles.td, textAlign: 'left'}}>{p.nombre}</td>
-              <td style={{...styles.td, textAlign: 'center'}}>{p.cantidad || 1}</td>
-              <td style={styles.td}>${p.precio.toLocaleString('es-CL')}</td>
-              <td style={styles.td}>${(p.precio * (p.cantidad || 1)).toLocaleString('es-CL')}</td>
-            </tr>
-          ))}
-          {Array.from({ length: Math.max(0, 12 - productos.length) }).map((_, i) => (
+          {productos.map(p => {
+            const precioEspecial = p.precio;
+            const precioBase = p.precioBase || precioEspecial;
+            const hayDescuento = precioBase && precioEspecial < precioBase;
+            const descuento = hayDescuento ? Math.round(((precioBase - precioEspecial) / precioBase) * 100) : 0;
+
+            return (
+              <tr key={p.codigo}>
+                <td style={{...styles.td, textAlign: 'center'}}>{p.codigo}</td>
+                <td style={{...styles.td, textAlign: 'left'}}>{p.nombre}</td>
+                <td style={{...styles.td, textAlign: 'center'}}>{p.cantidad || 1}</td>
+                <td style={styles.td}>${precioBase.toLocaleString('es-CL')}</td>
+                <td style={styles.td}>${precioEspecial.toLocaleString('es-CL')}</td>
+                <td style={{...styles.td, textAlign: 'center', color: hayDescuento ? '#228B22' : 'inherit', fontWeight: hayDescuento ? 'bold' : 'normal'}}>
+                  {descuento > 0 ? `${descuento}%` : '-'}
+                </td>
+                <td style={styles.td}>${(precioEspecial * (p.cantidad || 1)).toLocaleString('es-CL')}</td>
+              </tr>
+            );
+          })}
+          {Array.from({ length: Math.max(0, 10 - productos.length) }).map((_, i) => (
             <tr key={`empty-${i}`}>
-              <td style={styles.td}>&nbsp;</td><td style={styles.td}></td><td style={styles.td}></td><td style={styles.td}></td><td style={styles.td}></td>
+              <td style={styles.td}>&nbsp;</td><td style={styles.td}></td><td style={styles.td}></td><td style={styles.td}></td><td style={styles.td}></td><td style={styles.td}></td><td style={styles.td}></td>
             </tr>
           ))}
         </tbody>
@@ -107,12 +117,22 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       <footer style={styles.footer}>
         <div style={styles.notes}>
           <div style={{...styles.clientLabel, width: 'auto'}}>NOTA:</div>
-          <div style={{padding: '2mm'}}>Esta cotización es válida por 20 días corridos a partir de esta fecha</div>
+          <div style={{padding: '2mm'}}>
+            Esta cotización es válida por 20 días corridos a partir de esta fecha.
+            <br/><br/>
+            <strong>Datos de Transferencia</strong><br/>
+            BANCO CHILE<br/>
+            00-800-36587-09<br/>
+            PIETTRA SPA<br/>
+            77.057.227-4
+          </div>
         </div>
         <div style={styles.totals}>
           <div style={styles.totalRow}><strong>SUBTOTAL</strong><span>${subtotal.toLocaleString('es-CL')}</span></div>
-          <div style={styles.totalRow}><strong>IVA</strong><span>${iva.toLocaleString('es-CL')}</span></div>
-          <div style={{...styles.totalRow, backgroundColor: '#2d4373', color: 'white', fontWeight: 'bold', border: '1px solid black'}}><strong>TOTAL A PAGAR</strong><span>${totalAPagar.toLocaleString('es-CL')}</span></div>
+          <div style={styles.totalRow}><strong>IVA (19%)</strong><span>${iva.toLocaleString('es-CL')}</span></div>
+          <div style={{...styles.totalRow, backgroundColor: '#2d4373', color: 'white', fontWeight: 'bold', border: '1px solid black', flexGrow: 1, alignItems: 'center'}}>
+            <strong>TOTAL A PAGAR</strong><span>${totalAPagar.toLocaleString('es-CL')}</span>
+          </div>
         </div>
       </footer>
     </div>
