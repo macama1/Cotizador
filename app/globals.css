@@ -11,8 +11,8 @@
   --primary: #f97316;         /* Naranjo vibrante para acentos y botones principales */
   --primary-hover: #ea580c;   /* Naranjo más oscuro para el efecto hover */
   
-  --text-primary: #f1f1f1;     /* Blanco/Gris muy claro para el texto principal */
-  --text-secondary: #a0a0a0;  /* Gris claro para texto secundario o placeholders */
+  --text-primary: #000000;     /* Blanco/Gris muy claro para el texto principal */
+  --text-secondary: #ffffff;  /* Gris claro para texto secundario o placeholders */
 }
 
 /* 2. Se aplican los colores base */
@@ -161,6 +161,8 @@ input::placeholder {
   background-color: #3c3c3c;
   border-color: var(--primary);
 }
+/* Agrega esto al final de tu archivo globals.css */
+
 .info-select {
   width: 100%;        /* Ocupa el espacio disponible que le da el grid */
   max-width: 280px;   /* Pero con un ancho máximo para que no se estire demasiado */
