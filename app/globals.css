@@ -1,88 +1,209 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useCombobox } from "downshift";
-import { Cliente } from '../types.d'; 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-export default function SelectCliente({
-  onClienteSeleccionado,
-}: {
-  onClienteSeleccionado: (cliente: Cliente | null) => void;
-}) {
-  const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
+/* 1. Paleta de colores corregida y unificada */
+:root {
+  --background: #2d3748;      /* Gris azulado oscuro para el fondo */
+  --surface: #1d2634;         /* Un gris aún más oscuro para superficies */
+  --border: #4a5568;           /* Un borde sutil */
+  
+  --primary: #f97316;         /* Naranjo vibrante para acentos */
+  --primary-hover: #ea580c;   /* Naranjo más oscuro para el efecto hover */
+  
+  --text-primary: #f1f1f1;     /* Blanco/Gris claro para el texto principal */
+  --text-secondary: #a0aec0;  /* Gris claro para texto secundario o placeholders */
+}
 
-  useEffect(() => {
-    const fetchClientes = async () => {
-      try {
-        const res = await fetch(
-          "https://script.google.com/macros/s/AKfycbxWhEhKc5IVk1o0szx9iljzeLLHmf60CFIxDNrgDxpSGVMil5XRZUiBCXok1v9Mzqn-/exec"
-        );
-        const data = await res.json();
-        const clientesValidos = Array.isArray(data)
-          ? data.filter((c: Cliente) => typeof c?.Cliente === "string")
-          : [];
-        setClientes(clientesValidos);
-      } catch (error) {
-        console.error("Error al cargar clientes:", error);
-      }
-    };
-    fetchClientes();
-  }, []);
+/* 2. Estilos base para el cuerpo de la página */
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+}
 
-  const {
-    isOpen,
-    getMenuProps,
-    getInputProps,
-    getItemProps,
-    highlightedIndex,
-    selectItem,
-  } = useCombobox({
-    items: filteredClientes,
-    itemToString: (item) => (item ? item.Cliente : ""),
-    onInputValueChange({ inputValue }) {
-      const filtered = clientes.filter((cliente) =>
-        cliente?.Cliente?.toLowerCase().includes(
-          inputValue?.toLowerCase() || ""
-        )
-      );
-      setFilteredClientes(filtered);
-    },
-    onSelectedItemChange({ selectedItem }) {
-      onClienteSeleccionado(selectedItem || null);
-    },
-  });
+/* --- ESTILOS GENERALES PARA INPUTS, SELECTS Y LABELS --- */
 
-  return (
-    <div style={{position: 'relative'}}>
-      <label>Seleccionar Cliente:</label>
-      {/* 👇 SE ELIMINA EL DIV FLEX Y EL BOTÓN DE LA FLECHA 👇 */}
-      <input
-        {...getInputProps()}
-        className="combobox-input"
-        placeholder="Buscar cliente..."
-      />
-      
-      <ul {...getMenuProps()} className="combobox-menu">
-        {isOpen &&
-          filteredClientes.map((item, index) => (
-            <li key={item.ID || index} style={{listStyle: 'none'}}>
-              <button
-                {...getItemProps({ item, index })}
-                type="button" // Se añade type="button" para evitar envíos de formulario
-                className="product-item-button"
-                style={{
-                  backgroundColor:
-                    highlightedIndex === index ? '#3c3c3c' : undefined,
-                  borderColor:
-                    highlightedIndex === index ? 'var(--primary)' : undefined,
-                }}
-                onClick={() => selectItem(item)}
-              >
-                {item.Cliente}
-              </button>
-            </li>
-          ))}
-      </ul>
-    </div>
-  );
+label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  display: block;
+  color: var(--text-primary); /* Color blanco para las etiquetas */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* --- BOTÓN PRINCIPAL (Descargar PDF) --- */
+.pdf-button {
+  width: auto;
+  display: inline-block;
+  padding: 10px 24px;
+  margin-top: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pdf-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.pdf-button:disabled {
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* --- DISEÑO DE FORMULARIOS ALINEADOS --- */
+.client-details-form {
+  display: grid;
+  grid-template-columns: 150px 1fr; 
+  gap: 16px;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.client-details-form label {
+  font-weight: bold;
+  text-align: right;
+}
+
+.client-details-form input,
+.client-details-form select {
+  max-width: 400px;
+}
+
+/* --- CAMPOS DE PAGO Y ENTREGA --- */
+.info-select {
+  width: 100%;
+  max-width: 280px;
+}
+
+/* --- TABLA DE PRODUCTOS --- */
+.table-header {
+  border-bottom: 2px solid var(--primary);
+  padding: 12px;
+  background-color: transparent;
+  font-weight: bold;
+  text-align: left;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.table-cell {
+  border-bottom: 1px solid var(--border);
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.price-input,
+.quantity-input {
+  padding: 4px 8px;
+  text-align: center;
+  background-color: #383838;
+}
+.price-input { width: 100px; }
+.quantity-input { width: 70px; }
+
+/* --- SELECTORES DE CLIENTE/PRODUCTO --- */
+/* Reemplaza la regla .combobox-input existente con esta */
+
+.combobox-input {
+  /* Tamaño y Espaciado */
+  padding: 12px 16px;
+  width: 50%;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  
+  /* Colores y Bordes */
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  
+  /* Transiciones para un efecto suave */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.combobox-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+.product-item-button {
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+
+.product-item-button:hover {
+  background-color: #3c3c3c;
+  border-color: var(--primary);
+}
+
+/* Añade esto al final de tu globals.css */
+
+/* En globals.css */
+
+.dropdown-arrow-button {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0 12px;
+  margin-left: -1px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  cursor: pointer;
+}
+
+.dropdown-arrow-button:hover {
+  border-color: var(--primary);
+}
+
+.combobox-menu {
+  position: absolute;
+  width: 100%;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  padding: 4px;
 }
