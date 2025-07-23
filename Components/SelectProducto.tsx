@@ -92,7 +92,7 @@ export default function SelectProducto({
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
         className="combobox-input"
-        style={{ width: "100%", padding: "8px", marginBottom: "1rem" }}
+        style={{ width: "50%", padding: "8px", marginBottom: "1rem" }}
       />
 
       {productosFiltrados.length > 0 && (
