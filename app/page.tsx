@@ -60,8 +60,7 @@ export default function Home() {
   const agregarProducto = (producto: Producto) => {
     const nuevoProducto = { 
       ...producto, 
-      cantidad: 1, 
-      precioBase: producto.precio 
+      cantidad: 1,  
     };
     setProductos(prev => [...prev, nuevoProducto]);
   };
