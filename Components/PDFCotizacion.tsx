@@ -42,11 +42,11 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
     <div ref={ref} style={styles.page}>
       <header style={styles.header}>
         <img src="/logo.png" alt="Logo" style={styles.logo} />
-        <div style={styles.companyInfo}>
-          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br /> 
+        <div style={styles.companyInfo}> 
           PIETTRA SPA<br />
           77057227-4<br/>
           Panamericana Norte 18.800, Lote 4, Lampa - Santiago<br />
+          <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br />
           Tel. {vendedor?.Número || ''}<br />
           <a href={`mailto:${vendedor?.Correo || ''}`}>{vendedor?.Correo || ''}</a><br />
           www.natstone.cl
