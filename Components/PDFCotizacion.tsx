@@ -43,7 +43,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       <header style={styles.header}>
         <img src="/logo.png" alt="Logo" style={styles.logo} />
         <div style={styles.companyInfo}> 
-          PIETTRA SPA<br />
+          PIETTRA  SPA<br />
           77057227-4<br/>
           Panamericana Norte 18.800, Lote 4, Lampa - Santiago<br />
           <strong>{vendedor?.Vendedor || cliente.Vendedor}</strong><br />
