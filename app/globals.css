@@ -1,169 +1,88 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+"use client";
+import { useEffect, useState } from "react";
+import { useCombobox } from "downshift";
+import { Cliente } from '../types.d'; 
 
-/* 1. Se define la nueva paleta de colores profesional */
-:root {
-  --background: #000000;      /* Negro/Gris muy oscuro para el fondo */
-  --surface: #2c2c2c;         /* Gris para superficies (inputs, botones secundarios) */
-  --border: #444444;           /* Un borde sutil para separar elementos */
-  
-  --primary: #f97316;         /* Naranjo vibrante para acentos y botones principales */
-  --primary-hover: #ea580c;   /* Naranjo más oscuro para el efecto hover */
-  
-  --text-primary: #000000;     /* Blanco/Gris muy claro para el texto principal */
-  --text-secondary: #ffffff;  /* Gris claro para texto secundario o placeholders */
-}
+export default function SelectCliente({
+  onClienteSeleccionado,
+}: {
+  onClienteSeleccionado: (cliente: Cliente | null) => void;
+}) {
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
 
-/* 2. Se aplican los colores base */
-/* Reemplaza tu 'body' actual con esto en globals.css */
+  useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        const res = await fetch(
+          "https://script.google.com/macros/s/AKfycbxWhEhKc5IVk1o0szx9iljzeLLHmf60CFIxDNrgDxpSGVMil5XRZUiBCXok1v9Mzqn-/exec"
+        );
+        const data = await res.json();
+        const clientesValidos = Array.isArray(data)
+          ? data.filter((c: Cliente) => typeof c?.Cliente === "string")
+          : [];
+        setClientes(clientesValidos);
+      } catch (error) {
+        console.error("Error al cargar clientes:", error);
+      }
+    };
+    fetchClientes();
+  }, []);
 
-body {
-  /* Un color de fondo base por si el gradiente no carga */
-  background-color: #2d3748; 
-  
-  /* Gradiente sutil de un gris azulado a uno más oscuro */
-  background-image: linear-gradient(180deg, #3c4a5e 0%, #212936 100%);
+  const {
+    isOpen,
+    getMenuProps,
+    getInputProps,
+    getItemProps,
+    highlightedIndex,
+    selectItem,
+  } = useCombobox({
+    items: filteredClientes,
+    itemToString: (item) => (item ? item.Cliente : ""),
+    onInputValueChange({ inputValue }) {
+      const filtered = clientes.filter((cliente) =>
+        cliente?.Cliente?.toLowerCase().includes(
+          inputValue?.toLowerCase() || ""
+        )
+      );
+      setFilteredClientes(filtered);
+    },
+    onSelectedItemChange({ selectedItem }) {
+      onClienteSeleccionado(selectedItem || null);
+    },
+  });
 
-  /* Aseguramos que el fondo cubra toda la pantalla, incluso si hay poco contenido */
-  min-height: 100vh;
-  
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-/* --- ESTILOS GENERALES PARA INPUTS Y LABELS --- */
-
-label {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 4px;
-  display: block;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  background-color: var(--surface);
-  color: var(--text-primary);
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
-}
-
-input::placeholder {
-  color: var(--text-secondary);
-}
-
-/* --- BOTÓN PRINCIPAL (Descargar PDF) --- */
-.pdf-button {
-  width: auto; /* Para que no ocupe todo el ancho */
-  display: inline-block;
-  padding: 10px 24px;
-  margin-top: 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--text-primary);
-  background-color: var(--primary);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.pdf-button:hover {
-  background-color: var(--primary-hover);
-}
-
-.pdf-button:disabled {
-  background-color: var(--surface);
-  color: var(--text-secondary);
-  cursor: not-allowed;
-}
-
-
-/* --- FORMULARIO DE CLIENTE --- */
-.client-details-form {
-  display: grid;
-  grid-template-columns: 120px 1fr; 
-  gap: 16px;
-  align-items: center;
-  margin-top: 1.5rem;
-}
-
-.client-details-form label {
-  font-weight: bold;
-  text-align: right;
-  color: var(--text-primary);
-}
-
-.client-details-form input {
-  max-width: 400px;
-}
-
-
-/* --- TABLA DE PRODUCTOS --- */
-.table-header {
-  border-bottom: 2px solid var(--primary);
-  padding: 12px;
-  background-color: transparent;
-  font-weight: bold;
-  text-align: left;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  font-size: 0.8rem;
-}
-
-.table-cell {
-  border-bottom: 1px solid var(--border);
-  padding: 12px;
-  vertical-align: middle;
-}
-
-.price-input,
-.quantity-input {
-  padding: 4px 8px;
-  text-align: center;
-  background-color: #383838; /* Un poco más claro para destacar */
-}
-.price-input { width: 100px; }
-.quantity-input { width: 70px; }
-
-
-/* --- SELECTORES DE CLIENTE/PRODUCTO --- */
-.combobox-input {
-  margin-bottom: 0.5rem;
-}
-
-.product-item-button {
-  width: 100%;
-  text-align: left;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: var(--surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  transition: background-color 0.2s;
-}
-
-.product-item-button:hover {
-  background-color: #3c3c3c;
-  border-color: var(--primary);
-}
-/* Agrega esto al final de tu archivo globals.css */
-
-.info-select {
-  width: 100%;        /* Ocupa el espacio disponible que le da el grid */
-  max-width: 280px;   /* Pero con un ancho máximo para que no se estire demasiado */
+  return (
+    <div style={{position: 'relative'}}>
+      <label>Seleccionar Cliente:</label>
+      {/* 👇 SE ELIMINA EL DIV FLEX Y EL BOTÓN DE LA FLECHA 👇 */}
+      <input
+        {...getInputProps()}
+        className="combobox-input"
+        placeholder="Buscar cliente..."
+      />
+      
+      <ul {...getMenuProps()} className="combobox-menu">
+        {isOpen &&
+          filteredClientes.map((item, index) => (
+            <li key={item.ID || index} style={{listStyle: 'none'}}>
+              <button
+                {...getItemProps({ item, index })}
+                type="button" // Se añade type="button" para evitar envíos de formulario
+                className="product-item-button"
+                style={{
+                  backgroundColor:
+                    highlightedIndex === index ? '#3c3c3c' : undefined,
+                  borderColor:
+                    highlightedIndex === index ? 'var(--primary)' : undefined,
+                }}
+                onClick={() => selectItem(item)}
+              >
+                {item.Cliente}
+              </button>
+            </li>
+          ))}
+      </ul>
+    </div>
+  );
 }
