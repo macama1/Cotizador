@@ -26,7 +26,7 @@ export default function Home() {
 
   const pdfRef = useRef<HTMLDivElement>(null);
   
-  // Opciones para las listas de sugerencias
+  // Opciones para los desplegables
   const opcionesPago = ["Contado", "Transferencia", "WebPay", "Orden de Compra"];
   const opcionesEntrega = ["Retiro en planta", "Despacho a obra"];
   const opcionesTiempo = ["24 hrs", "48 hrs", "1 semana", "1 mes"];
@@ -72,7 +72,6 @@ export default function Home() {
     };
     setProductos(prev => [...prev, nuevoProducto]);
   };
-
   const actualizarCantidad = (index: number, cantidad: number) => {
     const nuevaCantidad = isNaN(cantidad) ? undefined : cantidad;
     setProductos(prev => prev.map((p, i) => i === index ? { ...p, cantidad: nuevaCantidad } : p));
@@ -128,22 +127,19 @@ export default function Home() {
 
       <div className="client-details-form" style={{marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '2rem'}}>
         <label>Forma de Pago:</label>
-        <input list="pago-opciones" value={formaDePago} onChange={(e) => setFormaDePago(e.target.value)} className="info-select" />
-        <datalist id="pago-opciones">
-          {opcionesPago.map(op => <option key={op} value={op} />)}
-        </datalist>
+        <select value={formaDePago} onChange={(e) => setFormaDePago(e.target.value)} className="info-select">
+          {opcionesPago.map(op => <option key={op} value={op}>{op}</option>)}
+        </select>
         
         <label>Forma de Entrega:</label>
-        <input list="entrega-opciones" value={formaDeEntrega} onChange={(e) => setFormaDeEntrega(e.target.value)} className="info-select" />
-        <datalist id="entrega-opciones">
-          {opcionesEntrega.map(op => <option key={op} value={op} />)}
-        </datalist>
+        <select value={formaDeEntrega} onChange={(e) => setFormaDeEntrega(e.target.value)} className="info-select">
+          {opcionesEntrega.map(op => <option key={op} value={op}>{op}</option>)}
+        </select>
         
         <label>Tiempo de Entrega:</label>
-        <input list="tiempo-opciones" value={tiempoDeEntrega} onChange={(e) => setTiempoDeEntrega(e.target.value)} className="info-select" />
-        <datalist id="tiempo-opciones">
-          {opcionesTiempo.map(op => <option key={op} value={op} />)}
-        </datalist>
+        <select value={tiempoDeEntrega} onChange={(e) => setTiempoDeEntrega(e.target.value)} className="info-select">
+          {opcionesTiempo.map(op => <option key={op} value={op}>{op}</option>)}
+        </select>
       </div>
       
       <SelectCliente onClienteSeleccionado={(cliente) => setCliente(cliente)} />
