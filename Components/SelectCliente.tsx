@@ -1,11 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useCombobox } from "downshift";
-
-// 👇 1. Se importa el tipo Cliente desde el archivo central
 import { Cliente } from '../types.d'; 
-
-// 2. La definición de tipo local 'type Cliente = { ... }' se elimina de aquí.
 
 export default function SelectCliente({
   onClienteSeleccionado,
@@ -13,9 +9,6 @@ export default function SelectCliente({
   onClienteSeleccionado: (cliente: Cliente | null) => void;
 }) {
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  // El resto del código no necesita cambios, ya que usa la API correcta y
-  // el componente downshift para la búsqueda.
-  
   const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
 
   useEffect(() => {
@@ -29,7 +22,6 @@ export default function SelectCliente({
           ? data.filter((c: Cliente) => typeof c?.Cliente === "string")
           : [];
         setClientes(clientesValidos);
-        setFilteredClientes(clientesValidos);
       } catch (error) {
         console.error("Error al cargar clientes:", error);
       }
@@ -43,6 +35,7 @@ export default function SelectCliente({
     getInputProps,
     getItemProps,
     highlightedIndex,
+    selectItem,
   } = useCombobox({
     items: filteredClientes,
     itemToString: (item) => (item ? item.Cliente : ""),
@@ -60,26 +53,33 @@ export default function SelectCliente({
   });
 
   return (
-    <div>
+    <div style={{position: 'relative'}}>
       <label>Seleccionar Cliente:</label>
+      {/* 👇 SE ELIMINA EL DIV FLEX Y EL BOTÓN DE LA FLECHA 👇 */}
       <input
         {...getInputProps()}
         className="combobox-input"
         placeholder="Buscar cliente..."
       />
+      
       <ul {...getMenuProps()} className="combobox-menu">
         {isOpen &&
           filteredClientes.map((item, index) => (
-            <li
-              key={item.ID || index}
-              {...getItemProps({ item, index })}
-              className="combobox-item"
-              style={{
-                backgroundColor:
-                  highlightedIndex === index ? "#bde4ff" : undefined,
-              }}
-            >
-              {item.Cliente}
+            <li key={item.ID || index} style={{listStyle: 'none'}}>
+              <button
+                {...getItemProps({ item, index })}
+                type="button" // Se añade type="button" para evitar envíos de formulario
+                className="product-item-button"
+                style={{
+                  backgroundColor:
+                    highlightedIndex === index ? '#3c3c3c' : undefined,
+                  borderColor:
+                    highlightedIndex === index ? 'var(--primary)' : undefined,
+                }}
+                onClick={() => selectItem(item)}
+              >
+                {item.Cliente}
+              </button>
             </li>
           ))}
       </ul>
