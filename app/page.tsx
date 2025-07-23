@@ -19,7 +19,7 @@ export default function Home() {
   const [numeroCotizacion, setNumeroCotizacion] = useState<number | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Estados para los campos de pago y entrega
+  // Estados para los nuevos campos
   const [formaDePago, setFormaDePago] = useState("Contado");
   const [formaDeEntrega, setFormaDeEntrega] = useState("Retiro en planta");
   const [tiempoDeEntrega, setTiempoDeEntrega] = useState("24 hrs");
@@ -40,7 +40,7 @@ export default function Home() {
     if (cliente && vendedores.length > 0) {
       const nombreVendedorCliente = cliente.Vendedor.trim().toLowerCase();
       const vendedorEncontrado = vendedores.find(v => v.Vendedor.trim().toLowerCase() === nombreVendedorCliente);
-      setVendedorAsociado(vendedorEncontrado || { Vendedor: cliente.Vendedor, Correo: '', Número: '' });
+      setVendedorAsociado(vendedorEncontrado || null);
     } else {
       setVendedorAsociado(null);
     }
@@ -50,25 +50,18 @@ export default function Home() {
     if (cliente) setCliente({ ...cliente, [campo]: valor });
   };
   
-  const handleVendedorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const nuevoNombre = e.target.value;
-      const vendedorExistente = vendedores.find(v => v.Vendedor.toLowerCase() === nuevoNombre.toLowerCase());
-      if (vendedorExistente) {
-          setVendedorAsociado(vendedorExistente);
-      } else {
-          setVendedorAsociado(prev => ({
-              Vendedor: nuevoNombre,
-              Correo: prev?.Correo || '',
-              Número: prev?.Número || ''
-          }));
-      }
+  // Función para manejar el cambio manual del vendedor
+  const handleVendedorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const nombreVendedor = e.target.value;
+    const nuevoVendedor = vendedores.find(v => v.Vendedor === nombreVendedor);
+    setVendedorAsociado(nuevoVendedor || null);
   };
-  
+
   const agregarProducto = (producto: Producto) => {
     const nuevoProducto = { 
       ...producto, 
       cantidad: 1, 
-      precioBase: producto.precio
+      precioBase: producto.precio 
     };
     setProductos(prev => [...prev, nuevoProducto]);
   };
@@ -130,12 +123,10 @@ export default function Home() {
         <select value={formaDePago} onChange={(e) => setFormaDePago(e.target.value)} className="info-select">
           {opcionesPago.map(op => <option key={op} value={op}>{op}</option>)}
         </select>
-        
         <label>Forma de Entrega:</label>
         <select value={formaDeEntrega} onChange={(e) => setFormaDeEntrega(e.target.value)} className="info-select">
           {opcionesEntrega.map(op => <option key={op} value={op}>{op}</option>)}
         </select>
-        
         <label>Tiempo de Entrega:</label>
         <select value={tiempoDeEntrega} onChange={(e) => setTiempoDeEntrega(e.target.value)} className="info-select">
           {opcionesTiempo.map(op => <option key={op} value={op}>{op}</option>)}
@@ -161,11 +152,17 @@ export default function Home() {
               onChange={(e) => handleChangeCliente("Cliente", e.target.value)} 
             />
             <label>Vendedor (Asociado):</label>
-            <input 
-              type="text" 
+            <select 
               value={vendedorAsociado?.Vendedor || ''} 
-              onChange={handleVendedorChange} 
-            />
+              onChange={handleVendedorChange}
+              className="info-select"
+            >
+              {vendedores.map(v => (
+                <option key={v.Vendedor} value={v.Vendedor}>
+                  {v.Vendedor}
+                </option>
+              ))}
+            </select>
             <label>Dirección:</label>
             <input type="text" value={cliente.Direccion || ""} onChange={(e) => handleChangeCliente("Direccion", e.target.value)} />
             <label>Correo (Cliente):</label>
