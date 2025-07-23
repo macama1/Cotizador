@@ -207,30 +207,3 @@ input::placeholder {
   z-index: 10;
   padding: 4px;
 }
-/* --- ESTILOS RESPONSIVOS PARA MÓVILES --- */
-
-/* Estas reglas se aplican solo a pantallas con un ancho de 768px o menos */
-@media (max-width: 768px) {
-  
-  /* Convierte los formularios a una sola columna */
-  .client-details-form {
-    grid-template-columns: 1fr; /* Una sola columna que ocupa todo el ancho */
-    gap: 1rem;
-  }
-  
-  .client-details-form label {
-    text-align: left; /* Alinea las etiquetas a la izquierda, se ve mejor en una columna */
-  }
-
-  /* Asegura que los inputs no tengan un ancho máximo en móviles */
-  .client-details-form input,
-  .client-details-form select,
-  .info-select {
-    max-width: none;
-  }
-
-  /* Reduce el espaciado general de la app en pantallas pequeñas */
-  main {
-    padding: 1rem;
-  }
-}
