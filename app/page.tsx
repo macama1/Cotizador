@@ -98,6 +98,7 @@ export default function Home() {
           cliente: cliente.Cliente,
           rut: cliente.ID,
           vendedor: vendedorAsociado?.Vendedor || cliente.Vendedor,
+          obra: cliente.Obra || '',
           productosAgrupados,
           preciosAgrupados,
           subtotal
@@ -164,6 +165,8 @@ export default function Home() {
             </select>
             <label>Dirección:</label>
             <input type="text" value={cliente.Direccion || ""} onChange={(e) => handleChangeCliente("Direccion", e.target.value)} />
+            <label>Obra:</label>
+            <input type="text" value={cliente.Obra || ""} onChange={(e) => handleChangeCliente("Obra", e.target.value)} />
             <label>Correo (Cliente):</label>
             <input type="email" value={cliente.Correo || ""} onChange={(e) => handleChangeCliente("Correo", e.target.value)} />
             <label>Teléfono (Cliente):</label>
