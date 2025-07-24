@@ -10,6 +10,7 @@ export type Vendedor = {
     Cliente: string;
     Vendedor: string;
     Direccion?: string;
+    Obra?: string;
     Correo?: string;
     Telefono?: string;
     "Lista Precio": string;
