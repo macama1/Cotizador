@@ -163,7 +163,7 @@ export default function Home() {
                 </option>
               ))}
             </select>
-            <label>Dirección:</label>
+            <label>Dirección De Despacho:</label>
             <input type="text" value={cliente.Direccion || ""} onChange={(e) => handleChangeCliente("Direccion", e.target.value)} />
             <label>Obra:</label>
             <input type="text" value={cliente.Obra || ""} onChange={(e) => handleChangeCliente("Obra", e.target.value)} />
