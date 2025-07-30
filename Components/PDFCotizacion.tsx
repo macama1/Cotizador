@@ -68,7 +68,7 @@ const PDFCotizacion = forwardRef<HTMLDivElement, Props>(({ cliente, vendedor, pr
       <section style={styles.clientGrid}>
         <div style={styles.clientRow}><div style={styles.clientLabel}>CLIENTE</div><div style={styles.clientValue}>{cliente.Cliente}</div></div>
         <div style={styles.clientRow}><div style={styles.clientLabel}>RUT</div><div style={styles.clientValue}>{cliente.ID}</div></div>
-        <div style={styles.clientRow}><div style={styles.clientLabel}>DIRECCIÓN</div><div style={styles.clientValue}>{cliente.Direccion || ''}</div></div>
+        <div style={styles.clientRow}><div style={styles.clientLabel}>DIRECCIÓN DESPACHO</div><div style={styles.clientValue}>{cliente.Direccion || ''}</div></div>
         <div style={styles.clientRow}><div style={styles.clientLabel}>CORREO</div><div style={styles.clientValue}>{cliente.Correo || ''}</div></div>
         <div style={{...styles.clientRow, borderBottom: 'none'}}><div style={styles.clientLabel}>TELÉFONO</div><div style={styles.clientValue}>{cliente.Telefono || ''}</div></div>
       </section>
